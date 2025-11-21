@@ -4,7 +4,7 @@ A production‑ready backend built with **FastAPI**, **SQLAlchemy**, and **JWT a
 
 ---
 
-## 🚀 Features
+## Features
 
 - **User Authentication** (JWT based login/signup)
 - **Product Management** (CRUD, categories, popularity filter)
@@ -19,7 +19,7 @@ A production‑ready backend built with **FastAPI**, **SQLAlchemy**, and **JWT a
 
 ---
 
-## 📂 Project Structure
+## Project Structure
 
 ```
 app/
@@ -39,7 +39,7 @@ app/
 
 ---
 
-## 🛠️ Setup Instructions
+## Setup Instructions
 
 ### 1. Create Virtual Environment
 
@@ -71,7 +71,7 @@ http://127.0.0.1:8000/docs
 
 ---
 
-## 🔐 Authentication
+## Authentication
 
 This project uses **OAuth2PasswordBearer** + **JWT tokens**.
 
@@ -79,7 +79,7 @@ Login returns an access token to be used in all authenticated routes.
 
 ---
 
-## 🖼️ Image Upload (Form‑Data)
+## Image Upload (Form‑Data)
 
 To upload product image:
 
@@ -89,7 +89,7 @@ To upload product image:
 
 ---
 
-## 📦 Wishlist Usage
+## Wishlist Usage
 
 ### Add to Wishlist
 
@@ -109,7 +109,7 @@ GET /wishlist/
 
 ---
 
-## 📊 Sales Report Filters
+##  Sales Report Filters
 
 Supports filtering by:
 
@@ -120,7 +120,7 @@ Supports filtering by:
 
 ---
 
-## 📝 Environment Variables
+## Environment Variables
 
 Create `.env` file:
 
@@ -132,7 +132,7 @@ DATABASE_URL=sqlite:///./grocery.db
 
 ---
 
-## 📘 Tech Stack
+## Tech Stack
 
 - **FastAPI**
 - **SQLAlchemy**
