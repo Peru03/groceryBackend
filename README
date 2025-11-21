@@ -1,0 +1,144 @@
+# Grocery Backend API
+
+A production‑ready backend built with **FastAPI**, **SQLAlchemy**, and **JWT authentication**. This project includes core modules such as authentication, products, orders, cart, wishlist, and admin utilities.
+
+---
+
+## 🚀 Features
+
+- **User Authentication** (JWT based login/signup)
+- **Product Management** (CRUD, categories, popularity filter)
+- **Order Management** (create order, order status, coupon handling)
+- **Cart System** (add/remove/update items)
+- **Wishlist System** (add/remove items)
+- **Image Upload** (via Form‑Data)
+- **Admin Utilities** (sales report filters)
+- **SQLAlchemy ORM models** with relationships
+- **Enum-based status fields** for reliability
+- **Environment‑based config structure**
+
+---
+
+## 📂 Project Structure
+
+```
+app/
+├── main.py
+├── models/
+├── schemas/
+├── crud/
+├── routers/
+│ ├── auth.py
+│ ├── product.py
+│ ├── orders.py
+│ ├── cart.py
+│ ├── wishlist.py
+├── utils/
+├── database.py
+└── core/
+
+---
+
+## 🛠️ Setup Instructions
+
+### 1. Create Virtual Environment
+
+```bash
+python -m venv .venv
+venv\Scripts\activate   # Windows
+```
+
+### 2. Install Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### 3. Run Server
+
+```bash
+uvicorn app.main:app --reload
+
+```
+
+### 4. Access API Docs
+
+Open in browser:
+
+```
+http://127.0.0.1:8000/docs
+```
+
+---
+
+## 🔐 Authentication
+
+This project uses **OAuth2PasswordBearer** + **JWT tokens**.
+
+Login returns an access token to be used in all authenticated routes.
+
+---
+
+## 🖼️ Image Upload (Form‑Data)
+
+To upload product image:
+
+- Use `multipart/form-data`
+- Send file under key: `image`
+- Use endpoint inside `product.py`
+
+---
+
+## 📦 Wishlist Usage
+
+### Add to Wishlist
+
+```
+POST /wishlist/
+Body:
+{
+  "product_id": 1
+}
+```
+
+### Get Wishlist Items
+
+```
+GET /wishlist/
+```
+
+---
+
+## 📊 Sales Report Filters
+
+Supports filtering by:
+
+- Date range
+- Category
+- Popular items
+- Limit
+
+---
+
+## 📝 Environment Variables
+
+Create `.env` file:
+
+```
+SECRET_KEY=your_secret_key
+ALGORITHM=HS256
+DATABASE_URL=sqlite:///./grocery.db
+```
+
+---
+
+## 📘 Tech Stack
+
+- **FastAPI**
+- **SQLAlchemy**
+- **Pydantic**
+- **Uvicorn**
+- **Passlib**
+- **Python-Jose**
+
+---

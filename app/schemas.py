@@ -2,29 +2,37 @@ from pydantic import BaseModel, EmailStr
 from typing import Optional, List
 from datetime import datetime
 
-# User schemas
-class UserCreate(BaseModel):
-    email: EmailStr
-    password: str
-    role: Optional[str] = "customer"
 
-class UserOut(BaseModel):
-    id: int
+class ORMModel(BaseModel):
+    model_config = {"from_attributes": True}
+
+
+# User
+class UserBase(BaseModel):
+    name: str
     email: EmailStr
+
+
+class UserCreate(UserBase):
+    password: str
+
+
+class UserOut(UserBase, ORMModel):
+    id: int
     role: str
     created_at: datetime
 
-    class Config:
-        orm_mode = True
 
-# Auth
+# Auth tokens
 class Token(BaseModel):
     access_token: str
     token_type: str = "bearer"
 
+
 class TokenData(BaseModel):
     user_id: Optional[int] = None
     role: Optional[str] = None
+
 
 # Product
 class ProductBase(BaseModel):
@@ -34,54 +42,76 @@ class ProductBase(BaseModel):
     stock: int
     image_url: Optional[str] = None
 
+
 class ProductCreate(ProductBase):
     pass
 
-class ProductOut(ProductBase):
+
+class ProductOut(ProductBase, ORMModel):
     id: int
     created_at: datetime
 
-    class Config:
-        orm_mode = True
 
 # Cart
 class CartItemCreate(BaseModel):
     product_id: int
-    quantity: int
+    quantity: int = 1
 
-class CartItemOut(BaseModel):
+
+class CartItemOut(ORMModel):
     id: int
     product: ProductOut
     quantity: int
 
-    class Config:
-        orm_mode = True
 
 # Wishlist
-class WishlistItemOut(BaseModel):
+class WishlistItemOut(ORMModel):
     id: int
     product: ProductOut
+    
+class WishlistItemCreate(BaseModel):
+    product_id: int
 
-    class Config:
-        orm_mode = True
+
+
 
 # Order
-class OrderItemCreate(BaseModel):
+class OrderItemOut(BaseModel):
     product_id: int
     quantity: int
+    price_at_purchase: float
 
-class OrderOut(BaseModel):
+
+class OrderOut(ORMModel):
     id: int
     total_amount: float
     created_at: datetime
-    items: List[dict]
+    items: List[OrderItemOut]
+
+
+# PromoCode
+class PromoCodeCreate(BaseModel):
+    code: str
+    discount_percent: int
+    expires_at: datetime
+    min_order_amount: float = 0
+
+
+class PromoCodeOut(BaseModel):
+    id: int
+    code: str
+    discount_percent: int
+    expires_at: datetime
+    min_order_amount: float
+    active: bool
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
-# Sales report item
-class SalesReportItem(BaseModel):
-    product_id: int
-    name: str
-    category: Optional[str]
-    times_sold: int
+
+class PromoUpdate(BaseModel):
+    code: Optional[str]
+    discount_percent: Optional[int]
+    expires_at: Optional[datetime]
+    min_order_amount: Optional[float]
+    active: Optional[bool]

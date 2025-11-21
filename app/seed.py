@@ -1,28 +1,26 @@
-from .database import SessionLocal, engine
-from . import models, crud, schemas, auth
 from sqlalchemy.orm import Session
+from .database import engine, SessionLocal, Base
+from . import models
+from .auth import hash_password
 
 def seed():
+    Base.metadata.create_all(bind=engine)
     db: Session = SessionLocal()
-    # create a manager and a customer
-    from .models import User
-    if not db.query(models.User).filter_by(email="manager@example.com").first():
-        manager = schemas.UserCreate(email="manager@example.com", password="managerpass", role="manager")
-        crud.create_user(db, manager)
-    if not db.query(models.User).filter_by(email="customer@example.com").first():
-        customer = schemas.UserCreate(email="customer@example.com", password="custpass", role="customer")
-        crud.create_user(db, customer)
-
-    # create some products
-    if db.query(models.Product).count() == 0:
-        products = [
-            {"name":"Apple", "category":"Fruits", "price":50.0, "stock":100, "image_url":""},
-            {"name":"Bread", "category":"Bakery", "price":30.0, "stock":50, "image_url":""},
-            {"name":"Milk", "category":"Dairy", "price":45.0, "stock":200, "image_url":""}
-        ]
-        for p in products:
-            crud.create_product(db, schemas.ProductCreate(**p))
-    db.close()
+    try:
+        if not db.query(models.User).filter_by(email="manager@example.com").first():
+            m = models.User(name="Manager", email="manager@example.com", hashed_password=hash_password("managerpass"), role="manager")
+            db.add(m)
+        if not db.query(models.User).filter_by(email="customer@example.com").first():
+            c = models.User(name="Customer", email="customer@example.com", hashed_password=hash_password("custpass"), role="customer")
+            db.add(c)
+        if db.query(models.Product).count() == 0:
+            p1 = models.Product(name="Apple", category="Fruits", price=50.0, stock=100)
+            p2 = models.Product(name="Bread", category="Bakery", price=30.0, stock=50)
+            p3 = models.Product(name="Milk", category="Dairy", price=45.0, stock=200)
+            db.add_all([p1,p2,p3])
+        db.commit()
+    finally:
+        db.close()
 
 if __name__ == "__main__":
     seed()
