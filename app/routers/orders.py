@@ -18,32 +18,6 @@ def get_payload(token: str):
         return None
 
 
-# @router.post("/checkout", response_model=schemas.OrderOut)
-# def checkout(token: str = Depends(oauth2), db: Session = Depends(get_db)):
-#     payload = get_payload(token)
-#     if not payload or payload.get("role") != "customer":
-#         raise HTTPException(status_code=403, detail="Customer required")
-#     try:
-#         order = crud.checkout(db, payload.get("user_id"))
-#     except Exception as e:
-#         raise HTTPException(status_code=400, detail=str(e))
-#     items = [schemas.OrderItemOut(product_id=oi.product_id, quantity=oi.quantity, price_at_purchase=oi.price_at_purchase) for oi in order.items]
-#     return schemas.OrderOut(id=order.id, total_amount=order.total_amount, created_at=order.created_at, items=items)
-
-
-# @router.get("/manager/sales-report")
-# def sales_report(sort: Optional[str] = "most", category: Optional[str] = None, token: str = Depends(oauth2), db: Session = Depends(get_db)):
-#     try:
-#         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-#     except Exception:
-#         raise HTTPException(status_code=401, detail="Invalid token")
-#     if payload.get("role") != "manager":
-#         raise HTTPException(status_code=403, detail="Manager required")
-#     rows = crud.sales_report(db, sort=sort, category=category)
-#     return [{"product_id": r.product_id, "name": r.name, "category": r.category, "times_sold": int(r.times_sold)} for r in rows]
-
-
-
 @router.post("/checkout", response_model=schemas.OrderOut)
 def checkout(
     promo_code: str = None,
@@ -72,9 +46,7 @@ def checkout(
                 )
             total += product.price * ci.quantity
 
-        # ------------------------------
         # Apply promo code (IF given)
-        # ------------------------------
         discount = 0
         if promo_code:
             promo_result = crud.apply_promocode(db, promo_code, total)

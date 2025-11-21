@@ -18,11 +18,8 @@ def get_payload(token: str):
         return jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
     except Exception:
         return None
-    
-
-
+ 
 #  PRODUCT
-
 
 @router.post("/", response_model=schemas.ProductOut)
 def create_product(
@@ -63,15 +60,6 @@ def create_product(
     }
 
     return crud.create_product(db, schemas.ProductCreate(**product_data))
-
-
-# @router.post("/", response_model=schemas.ProductOut)
-# def create_product(product_in: schemas.ProductCreate, token: str = Depends(oauth2), db: Session = Depends(get_db)):
-#     payload = get_payload(token)
-#     if not payload or payload.get("role") != "manager":
-#         raise HTTPException(status_code=403, detail="Manager required")
-#     return crud.create_product(db, product_in)
-
 
 @router.get("/", response_model=List[schemas.ProductOut])
 def list_products(category: Optional[str] = None, popular: Optional[str] = None, limit: int = 50, db: Session = Depends(get_db)):

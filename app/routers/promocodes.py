@@ -11,7 +11,7 @@ router = APIRouter(prefix="/promocodes", tags=["Promo Codes"])
 oauth2 = OAuth2PasswordBearer(tokenUrl="/token")
 
 
-# 🔐 Helper to decode token (same as products router)
+# Helper to decode token (same as products router)
 def get_payload(token: str):
     try:
         return jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
@@ -20,8 +20,9 @@ def get_payload(token: str):
 
 
 # ============================
-# ✅ Create Promo Code
+#  Create Promo Code
 # ============================
+
 @router.post("/create")
 def create_promocode(
     data: schemas.PromoCodeCreate,
@@ -34,10 +35,10 @@ def create_promocode(
 
     return crud.create_promocode(db, data)
 
+# ============================
+#  Apply Promo Code
+# ============================
 
-# ============================
-# ✅ Apply Promo Code
-# ============================
 @router.get("/apply/{code}")
 def apply_promocode(
     code: str,
@@ -56,8 +57,9 @@ def apply_promocode(
 
 
 # ============================
-# ✅ Update Promo Code
+#  Update Promo Code
 # ============================
+
 @router.put("/update/{promo_id}")
 def update_promo(
     promo_id: int,
@@ -70,7 +72,7 @@ def update_promo(
     if not payload or payload.get("role") != "manager":
         raise HTTPException(status_code=403, detail="Manager access required")
 
-    # 👉 Import from models via "models.PromoCode"
+    #  Import from models via "models.PromoCode"
     PromoCode = models.PromoCode
 
     promo = db.query(PromoCode).filter(PromoCode.id == promo_id).first()
