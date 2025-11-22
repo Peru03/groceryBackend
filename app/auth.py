@@ -1,3 +1,38 @@
+# import os
+# from datetime import datetime, timedelta
+# from passlib.context import CryptContext
+# from jose import jwt
+# from dotenv import load_dotenv
+
+# load_dotenv()
+
+# SECRET_KEY = os.getenv("SECRET_KEY", "devsecret")
+# ALGORITHM = "HS256"
+# ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", 60*24*7))
+
+# pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+
+# def hash_password(password: str) -> str:
+#     return pwd_context.hash(password)
+
+
+# def verify_password(plain_password: str, hashed_password: str) -> bool:
+#     return pwd_context.verify(plain_password, hashed_password)
+
+
+# def create_access_token(data: dict, expires_delta: timedelta | None = None) -> str:
+#     to_encode = data.copy()
+#     if expires_delta:
+#         expire = datetime.utcnow() + expires_delta
+#     else:
+#         expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+#     to_encode.update({"exp": expire})
+#     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+#     return encoded_jwt
+
+
+
 import os
 from datetime import datetime, timedelta
 from passlib.context import CryptContext
@@ -14,17 +49,18 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 def hash_password(password: str) -> str:
-    """Hash password with bcrypt (max 72 bytes)"""
-    # Ensure password is within bcrypt's 72 byte limit
-    safe_password = password[:72] if len(password.encode('utf-8')) > 72 else password
-    return pwd_context.hash(safe_password)
+    """
+    Hash password with bcrypt (safe for Render / Passlib)
+    Ensures password is truncated to 72 bytes
+    """
+    safe_bytes = password.encode('utf-8')[:72]  # truncate by bytes
+    return pwd_context.hash(safe_bytes)
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    """Verify password against hash"""
-    # Truncate to same length as when hashing
-    safe_password = plain_password[:72] if len(plain_password.encode('utf-8')) > 72 else plain_password
-    return pwd_context.verify(safe_password, hashed_password)
+    """Verify password against hash (byte-safe)"""
+    safe_bytes = plain_password.encode('utf-8')[:72]
+    return pwd_context.verify(safe_bytes, hashed_password)
 
 
 def create_access_token(data: dict, expires_delta: timedelta | None = None) -> str:
@@ -35,5 +71,4 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None) -> s
     else:
         expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
-    return encoded_jwt
+    return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
