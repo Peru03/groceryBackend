@@ -32,7 +32,6 @@
 #     return encoded_jwt
 
 
-
 import os
 from datetime import datetime, timedelta
 from passlib.context import CryptContext
@@ -47,28 +46,24 @@ ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", 60*24
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
+MAX_BCRYPT_PASSWORD_LENGTH = 72  # bcrypt limit
+
 
 def hash_password(password: str) -> str:
     """
-    Hash password with bcrypt (safe for Render / Passlib)
-    Ensures password is truncated to 72 bytes
+    Hash password safely for bcrypt (max 72 chars)
     """
-    safe_bytes = password.encode('utf-8')[:72]  # truncate by bytes
-    return pwd_context.hash(safe_bytes)
+    safe_password = password[:MAX_BCRYPT_PASSWORD_LENGTH]
+    return pwd_context.hash(safe_password)
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    """Verify password against hash (byte-safe)"""
-    safe_bytes = plain_password.encode('utf-8')[:72]
-    return pwd_context.verify(safe_bytes, hashed_password)
+    safe_password = plain_password[:MAX_BCRYPT_PASSWORD_LENGTH]
+    return pwd_context.verify(safe_password, hashed_password)
 
 
 def create_access_token(data: dict, expires_delta: timedelta | None = None) -> str:
-    """Create JWT access token"""
     to_encode = data.copy()
-    if expires_delta:
-        expire = datetime.utcnow() + expires_delta
-    else:
-        expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    expire = datetime.utcnow() + (expires_delta or timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES))
     to_encode.update({"exp": expire})
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
