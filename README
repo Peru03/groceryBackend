@@ -1,145 +1,380 @@
 # Grocery Backend API
 
-A production‑ready backend built with FastAPI, SQLAlchemy, and JWT authentication. This project includes core modules such as authentication, products, orders, cart, wishlist, and admin utilities.
+A production-ready RESTful backend built with **FastAPI**, **SQLAlchemy**, and **JWT authentication**. This project provides a complete e-commerce solution for grocery stores with user management, product catalog, shopping cart, wishlist, orders, promotional codes, and inventory tracking.
 
 ---
 
-## Features
+##  Features
 
-- User Authentication (JWT based login/signup)
-- Product Management (CRUD, categories, popularity filter)
-- Order Management (create order, order status, coupon handling)
-- Cart System (add/remove/update items)
-- Wishlist System (add/remove items)
-- Image Upload (via Form‑Data)
-- Admin Utilities (sales report filters)
-- SQLAlchemy ORM models with relationships
-- Enum-based status fields for reliability
-- Environment‑based config structure
+- **Authentication & Authorization** - JWT-based secure login/signup with role-based access (Customer/Manager)
+- **Product Management** - Full CRUD operations with category filtering and popularity sorting
+- **Shopping Cart** - Add, update, and remove items with real-time stock validation
+- **Wishlist System** - Save favorite products for later
+- **Order Management** - Complete checkout process with promotional code support
+- **Promotional Codes** - Create and manage discount codes with expiration dates and minimum order amounts
+- **Inventory Tracking** - Low stock alerts for managers
+- **Image Upload** - Product image handling via multipart/form-data
+- **Sales Analytics** - Generate sales reports filtered by category and popularity
 
 ---
 
-## Project Structure
+## 📁 Project Structure
 
 ```
 app/
-├── auth.py
-├── main.py
-├── models.py
-├── schemas.py
-├── crud.py
-├── routers/
-│ ├── auth.py
-│ ├── product.py
-│ ├── orders.py
-| ├── promocode.py
-│ ├── cart.py
-│ ├── wishlist.py
-│ ├── inventory.py
-├── database.py
-└── seed.py
-uploads/
+├── main.py                 # FastAPI application entry point
+├── models.py               # SQLAlchemy database models
+├── schemas.py              # Pydantic validation schemas
+├── crud.py                 # Database operations
+├── auth.py                 # Password hashing & JWT token generation
+├── database.py             # Database configuration
+├── seed.py                 # Database seeding script
+└── routers/
+    ├── auth.py             # Authentication endpoints
+    ├── products.py         # Product CRUD & filtering
+    ├── cart.py             # Shopping cart operations
+    ├── orders.py           # Checkout & order management
+    ├── wishlist.py         # Wishlist operations
+    ├── promocodes.py       # Promo code management
+    └── inventory.py        # Low stock tracking
+
+uploads/                    # Product image storage
+requirements.txt            # Python dependencies
+.env                        # Environment variables
+```
 
 ---
 
 ## Setup Instructions
 
-### 1. Create Virtual Environment
+### 1. Clone the Repository
 
+```bash
+git clone https://github.com/Peru03/groceryBackend
+cd grocery-backend
 ```
+
+### 2. Create Virtual Environment
+
+**Windows:**
+```bash
 python -m venv .venv
-.\venv\Scripts\activate   # Windows
+.venv\Scripts\activate
 ```
 
-### 2. Install Dependencies
-
+**macOS/Linux:**
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
 ```
+
+### 3. Install Dependencies
+
+```bash
 pip install -r requirements.txt
 ```
 
-### 3. Run Server
+### 4. Configure Environment Variables
 
+Create a `.env` file in the root directory:
+
+```env
+SECRET_KEY=your-secret-key-here
+DATABASE_URL=mysql+pymysql://root:@localhost:3306/grocerydb
+ACCESS_TOKEN_EXPIRE_MINUTES=10080
 ```
+
+### 5. Seed Database (Optional)
+
+```bash
+python -m app.seed
+```
+
+This creates:
+- Manager account: `manager@example.com` / `managerpass`
+- Customer account: `customer@example.com` / `custpass`
+- Sample products (Apple, Bread, Milk)
+
+### 6. Run the Server
+
+```bash
 uvicorn app.main:app --reload
-
 ```
 
-### 4. Access API Docs
+Server starts at: `http://127.0.0.1:8000`
 
-Open in browser:
+### 7. Access API Documentation
+
+Open your browser:
+- **Swagger UI**: `http://127.0.0.1:8000/docs`
+- **ReDoc**: `http://127.0.0.1:8000/redoc`
+
+---
+
+##  Authentication
+
+This API uses **OAuth2 with JWT tokens**.
+
+### Register a New User
+
+```http
+POST /auth/register
+Content-Type: application/json
+
+{
+  "name": "user",
+  "email": "user@example.com",
+  "password": "userPassword",
+  "role": "customer"
+}
+```
+
+### Login & Get Access Token
+
+```http
+POST /auth/token
+Content-Type: application/x-www-form-urlencoded
+
+username=user@example.com
+password=userPassword
+```
+
+**Response:**
+```json
+{
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "token_type": "bearer"
+}
+```
+
+### Using the Token
+
+Include the token in the `Authorization` header for all protected routes:
+
+```http
+Authorization: Bearer <your_access_token>
+```
+
+---
+
+##  API Endpoints
+
+### Products
+
+| Method | Endpoint | Description | Access |
+|--------|----------|-------------|--------|
+| `POST` | `/products/` | Create product with image | Manager |
+| `GET` | `/products/` | List all products | Public |
+| `GET` | `/products/{id}` | Get product details | Public |
+| `PUT` | `/products/{id}` | Update product | Manager |
+| `DELETE` | `/products/{id}` | Delete product | Manager |
+
+**Query Parameters:**
+- `category` - Filter by category
+- `popular=most` - Sort by most sold
+- `popular=least` - Sort by least sold
+- `limit` - Maximum results (default: 50)
+
+### Shopping Cart
+
+| Method | Endpoint | Description | Access |
+|--------|----------|-------------|--------|
+| `POST` | `/cart/` | Add item to cart | Customer |
+| `GET` | `/cart/` | View cart items | Customer |
+| `DELETE` | `/cart/{item_id}` | Remove cart item | Customer |
+
+### Wishlist
+
+| Method | Endpoint | Description | Access |
+|--------|----------|-------------|--------|
+| `POST` | `/wishlist/` | Add to wishlist | Customer |
+| `GET` | `/wishlist/` | View wishlist | Customer |
+| `DELETE` | `/wishlist/{item_id}` | Remove from wishlist | Customer |
+
+### Orders
+
+| Method | Endpoint | Description | Access |
+|--------|----------|-------------|--------|
+| `POST` | `/orders/checkout` | Complete purchase | Customer |
+
+**Query Parameters:**
+- `promo_code` - Optional promotional code
+
+### Promotional Codes
+
+| Method | Endpoint | Description | Access |
+|--------|----------|-------------|--------|
+| `POST` | `/promocodes/create` | Create promo code | Manager |
+| `GET` | `/promocodes/apply/{code}` | Validate promo code | Public |
+| `PUT` | `/promocodes/update/{id}` | Update promo code | Manager |
+
+### Inventory
+
+| Method | Endpoint | Description | Access |
+|--------|----------|-------------|--------|
+| `GET` | `/inventory/low-stock` | Get low stock products | Manager |
+
+**Query Parameters:**
+- `threshold` - Stock level threshold (default: 5)
+
+---
+
+##  Usage Examples
+
+### Creating a Product with Image
+
+```bash
+curl -X POST "http://127.0.0.1:8000/products/" \
+  -H "Authorization: Bearer <token>" \
+  -F "name=Organic Banana" \
+  -F "category=Fruits" \
+  -F "price=40.0" \
+  -F "stock=150" \
+  -F "image=@/path/to/banana.jpg"
+```
+
+### Adding to Cart
+
+```bash
+curl -X POST "http://127.0.0.1:8000/cart/" \
+  -H "Authorization: Bearer <token>" \
+  -H "Content-Type: application/json" \
+  -d '{"product_id": 1, "quantity": 3}'
+```
+
+### Checkout with Promo Code
+
+```bash
+curl -X POST "http://127.0.0.1:8000/orders/checkout?promo_code=SAVE10" \
+  -H "Authorization: Bearer <token>"
+```
+
+### Creating a Promotional Code
+
+```bash
+curl -X POST "http://127.0.0.1:8000/promocodes/create" \
+  -H "Authorization: Bearer <token>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "code": "SAVE10",
+    "discount_percent": 10,
+    "expires_at": "2025-12-31T23:59:59",
+    "min_order_amount": 100.0
+  }'
+```
+
+---
+
+##  Database Models
+
+### User
+- Stores user credentials and role (customer/manager)
+- Relationships: cart_items, wishlist_items, orders
+
+### Product
+- Product catalog with name, category, price, stock, image
+- Tracks inventory levels
+
+### CartItem
+- User's shopping cart items with quantities
+- Real-time stock validation
+
+### WishlistItem
+- User's saved favorite products
+
+### Order
+- Completed purchases with total amount
+- Relationships: order_items (line items)
+
+### OrderItem
+- Individual products in an order
+- Captures price at time of purchase
+
+### PromoCode
+- Discount codes with expiration and minimum order requirements
+- Can be activated/deactivated
+
+---
+
+##  Tech Stack
+
+| Technology | Purpose |
+|------------|---------|
+| **FastAPI** | High-performance web framework |
+| **SQLAlchemy** | SQL toolkit and ORM |
+| **Pydantic** | Data validation |
+| **Uvicorn** | ASGI server |
+| **Passlib** | Password hashing (bcrypt) |
+| **Python-Jose** | JWT token handling |
+| **Python-Multipart** | File upload support |
+| **Alembic** | Database migrations |
+
+---
+
+##  Security Features
+
+- **Password Hashing** - Bcrypt algorithm via Passlib
+- **JWT Tokens** - Secure stateless authentication
+- **Role-Based Access** - Customer vs Manager permissions
+- **Token Expiration** - Configurable token lifetime
+- **SQL Injection Protection** - SQLAlchemy ORM parameterized queries
+
+---
+
+##  Business Logic
+
+### Stock Management
+- Real-time stock validation on cart addition
+- Automatic stock deduction on order completion
+- Low stock alerts for managers
+
+### Promotional Codes
+- Percentage-based discounts
+- Minimum order amount requirements
+- Expiration date enforcement
+- Active/inactive status toggle
+
+### Order Processing
+1. Validate cart items and stock availability
+2. Apply promotional code (if provided)
+3. Create order record
+4. Generate order items with purchase prices
+5. Deduct stock from products
+6. Clear user's cart
+
+---
+
+##  Error Handling
+
+The API returns standard HTTP status codes:
+
+- `200` - Success
+- `400` - Bad Request (validation errors, insufficient stock)
+- `401` - Unauthorized (invalid credentials)
+- `403` - Forbidden (insufficient permissions)
+- `404` - Not Found (resource doesn't exist)
+- `500` - Internal Server Error
+
+**Example Error Response:**
+```json
+{
+  "detail": "Insufficient stock for 'Organic Banana'"
+}
+```
+
+---
+
+##  Testing
+
+Access the interactive API documentation to test all endpoints:
 
 ```
 http://127.0.0.1:8000/docs
 ```
 
----
-
-## Authentication
-
-This project uses OAuth2PasswordBearer + JWT tokens.
-
-Login returns an access token to be used in all authenticated routes.
-
----
-
-## Image Upload (Form‑Data)
-
-To upload product image:
-
-- Use `multipart/form-data`
-- Send file under key: `image`
-- Use endpoint inside `product.py`
-
----
-
-## Wishlist Usage
-
-### Add to Wishlist
-
-```
-POST /wishlist/
-Body:
-{
-  "product_id": 1
-}
-```
-
-### Get Wishlist Items
-
-```
-GET /wishlist/
-```
-
----
-
-##  Sales Report Filters
-
-Supports filtering by:
-
-- Category
-- Popular items
-- Limit
-
----
-
-## Environment Variables
-
-Create `.env` file:
-
-```
-SECRET_KEY
-DATABASE_URL
-```
-
----
-
-## Tech Stack
-
-- FastAPI
-- SQLAlchemy
-- Pydantic
-- Uvicorn
-- Passlib
-- Python-Jose
+1. Click "Authorize" button
+2. Login via `/auth/token` to get access token
+3. Enter token in authorization modal
+4. Test any endpoint with the built-in interface
 
 ---
