@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 import os
@@ -58,3 +58,41 @@ def root():
 @app.get("/health")
 def health_check():
     return {"status": "healthy"}
+
+
+# ===== SEED ENDPOINT =====
+@app.post("/admin/seed")
+def seed_database(secret: str):
+    """
+    Seed database with initial data.
+    Call once with your SECRET_KEY to initialize the database.
+    """
+    # Security check
+    if secret != os.getenv("SECRET_KEY"):
+        raise HTTPException(status_code=403, detail="Invalid secret key")
+    
+    from . import seed, models
+    from .database import SessionLocal
+    
+    db = SessionLocal()
+    try:
+        # Check if already seeded
+        existing_manager = db.query(models.User).filter_by(email="manager@example.com").first()
+        if existing_manager:
+            return {"message": "Database already seeded", "status": "skipped"}
+        
+        # Run seed
+        seed.seed()
+        return {
+            "message": "Database seeded successfully",
+            "status": "success",
+            "accounts": {
+                "manager": {"email": "manager@example.com", "password": "managerpass"},
+                "customer": {"email": "customer@example.com", "password": "custpass"}
+            },
+            "products": ["Apple", "Bread", "Milk"]
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Seeding failed: {str(e)}")
+    finally:
+        db.close()
