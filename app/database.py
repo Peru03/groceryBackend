@@ -11,22 +11,23 @@ DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./grocery.db")
 if DATABASE_URL.startswith("postgres://"):
     DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
 
-# Production settings
+# Configure connection arguments based on database type
 connect_args = {}
 if "sqlite" in DATABASE_URL:
     connect_args = {"check_same_thread": False}
 
+# Create engine with production-ready settings
 engine = create_engine(
     DATABASE_URL,
     connect_args=connect_args,
-    pool_pre_ping=True,  # Verify connections before using
-    pool_recycle=300,    # Recycle connections after 5 minutes
+    pool_pre_ping=True,
+    pool_recycle=300,
+    echo=False
 )
 
 SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
 
 Base = declarative_base()
-
 
 def get_db():
     db = SessionLocal()
