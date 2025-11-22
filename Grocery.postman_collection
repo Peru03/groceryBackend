@@ -1,0 +1,687 @@
+{
+	"info": {
+		"_postman_id": "0843b715-f383-47fd-8683-1bdccb3ecab8",
+		"name": "Grocery Backend",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "16577196",
+		"_collection_link": "https://bold-capsule-674851.postman.co/workspace/Personal-Workspace~b8fd6b37-29d5-44dd-a405-02c4ccde92d9/collection/16577196-0843b715-f383-47fd-8683-1bdccb3ecab8?action=share&source=collection_link&creator=16577196"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"manager01\",\r\n  \"email\": \"manager01@gmail.com\",\r\n  \"password\": \"manager01\",\r\n  \"role\": \"manager\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/auth/register",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "username",
+									"value": "manager@example.com",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "managerpass",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseURL}}/auth/token",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"auth",
+								"token"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Products",
+			"item": [
+				{
+					"name": "Create Products",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "Square glasses",
+									"type": "text"
+								},
+								{
+									"key": "category",
+									"value": "Glasses",
+									"type": "text"
+								},
+								{
+									"key": "price",
+									"value": "1200",
+									"type": "text"
+								},
+								{
+									"key": "stock",
+									"value": "10",
+									"type": "text"
+								},
+								{
+									"key": "image",
+									"type": "file",
+									"src": "/C:/Users/SHAKUNTALA JANBANDHU/Downloads/vecteezy_the-sun-rises-over-the-mountains-and-the-mountains-are_33432006.jpg"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseURL}}/products/",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"products",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Products",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{baseURL}}/products/?popular=most",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"products",
+								""
+							],
+							"query": [
+								{
+									"key": "category",
+									"value": "Fruits",
+									"disabled": true
+								},
+								{
+									"key": "popular",
+									"value": "most"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Product detail",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"Prerna\",\r\n  \"email\": \"prerna@example.com\",\r\n  \"password\": \"password123\",\r\n  \"role\": \"customer\"\r\n}\r\n"
+						},
+						"url": {
+							"raw": "{{baseURL}}/products/4",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"products",
+								"4"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Product",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"Apple\",\r\n  \"price\": 210.0,\r\n  \"category\": \"Fruits\",\r\n  \"stock\": 58\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/products/4",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"products",
+								"4"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Product",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}products/1",
+							"host": [
+								"{{baseURL}}products"
+							],
+							"path": [
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Cart",
+			"item": [
+				{
+					"name": "Add Cart",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"product_id\": 2,\r\n  \"quantity\": 10\r\n}\r\n\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/cart/",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"cart",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get cart",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "\r\n"
+						},
+						"url": {
+							"raw": "{{baseURL}}/cart/",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"cart",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Cart item",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"Prerna\",\r\n  \"email\": \"prerna@example.com\",\r\n  \"password\": \"password123\",\r\n  \"role\": \"customer\"\r\n}\r\n"
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/cart/4",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"cart",
+								"4"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Wishlist",
+			"item": [
+				{
+					"name": "Add wishlist",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"product_id\": 3\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/wishlist",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"wishlist"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get wishlist",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{baseURL}}/wishlist/",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"wishlist",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete wishlist item",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"Prerna\",\r\n  \"email\": \"prerna@example.com\",\r\n  \"password\": \"password123\",\r\n  \"role\": \"customer\"\r\n}\r\n"
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/wishlist/2",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"wishlist",
+								"2"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Orders",
+			"item": [
+				{
+					"name": "Checkout",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "{{baseURL}}/orders/checkout",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"orders",
+								"checkout"
+							],
+							"query": [
+								{
+									"key": "promo_code",
+									"value": "FreshStart",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "sales report",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "{{baseURL}}/orders/manager/sales-report",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"orders",
+								"manager",
+								"sales-report"
+							],
+							"query": [
+								{
+									"key": "category",
+									"value": "Bakery",
+									"disabled": true
+								},
+								{
+									"key": "sort",
+									"value": "most",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Promocode",
+			"item": [
+				{
+					"name": "Create promocode",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"code\": \"FreshStart\",\r\n  \"discount_percent\": 25,\r\n  \"expires_at\": \"2025-11-25T07:39:16.880Z\",\r\n  \"min_order_amount\": 2000\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/promocodes/create",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"promocodes",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit promocode",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"code\": \"endOfSeasonSale\",\r\n  \"discount_percent\": 25,\r\n  \"expires_at\": \"2025-11-24T06:26:19.234Z\",\r\n  \"min_order_amount\": 2000,\r\n  \"active\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/promocodes/update/5",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"promocodes",
+								"update",
+								"5"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Apply code",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/promocodes/apply/FreshStart?cart_total=2500",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"promocodes",
+								"apply",
+								"FreshStart"
+							],
+							"query": [
+								{
+									"key": "cart_total",
+									"value": "2500"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "inventory Low stock alert",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{baseURL}}/inventory/low-stock",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"inventory",
+						"low-stock"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "SEED",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/admin/seed?secret=2e62fb8cefff7cc8d593d6f38bb20ccc",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"admin",
+						"seed"
+					],
+					"query": [
+						{
+							"key": "secret",
+							"value": "2e62fb8cefff7cc8d593d6f38bb20ccc"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjozLCJyb2xlIjoibWFuYWdlciIsImV4cCI6MTc2NDQwNTE3M30.StY07b1nyhsqCp5R5-pJbXFU_b2Ekpe_s69-poM9pME",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseURL",
+			"value": ""
+		}
+	]
+}
