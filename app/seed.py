@@ -1,14 +1,12 @@
 from sqlalchemy.orm import Session
-from .database import engine, SessionLocal, Base
+from .database import SessionLocal, Base, engine
 from . import models
 from .auth import hash_password
 
 def seed():
-    """Seed initial users and products safely"""
     Base.metadata.create_all(bind=engine)
     db: Session = SessionLocal()
     try:
-        # Manager user
         if not db.query(models.User).filter_by(email="manager@example.com").first():
             manager = models.User(
                 name="Manager",
@@ -18,7 +16,6 @@ def seed():
             )
             db.add(manager)
 
-        # Customer user
         if not db.query(models.User).filter_by(email="customer@example.com").first():
             customer = models.User(
                 name="Customer",
@@ -39,7 +36,6 @@ def seed():
 
         db.commit()
         print("Database seeded successfully!")
-
     except Exception as e:
         db.rollback()
         print(f"Seeding error: {str(e)}")
