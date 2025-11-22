@@ -71,8 +71,12 @@ def seed_database(secret: str):
     if secret != os.getenv("SECRET_KEY"):
         raise HTTPException(status_code=403, detail="Invalid secret key")
     
-    from . import seed, models
+    from passlib.context import CryptContext
     from .database import SessionLocal
+    from . import models
+    
+    # Create password hasher directly here
+    pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
     
     db = SessionLocal()
     try:
@@ -81,8 +85,39 @@ def seed_database(secret: str):
         if existing_manager:
             return {"message": "Database already seeded", "status": "skipped"}
         
-        # Run seed
-        seed.seed()
+        # Hash passwords (ensure they're short)
+        manager_hash = pwd_context.hash("managerpass")
+        customer_hash = pwd_context.hash("custpass")
+        
+        # Create manager
+        manager = models.User(
+            name="Manager",
+            email="manager@example.com",
+            hashed_password=manager_hash,
+            role="manager"
+        )
+        db.add(manager)
+        
+        # Create customer
+        customer = models.User(
+            name="Customer",
+            email="customer@example.com",
+            hashed_password=customer_hash,
+            role="customer"
+        )
+        db.add(customer)
+        
+        # Create products
+        products = [
+            models.Product(name="Apple", category="Fruits", price=50.0, stock=100),
+            models.Product(name="Bread", category="Bakery", price=30.0, stock=50),
+            models.Product(name="Milk", category="Dairy", price=45.0, stock=200),
+        ]
+        db.add_all(products)
+        
+        # Commit all changes
+        db.commit()
+        
         return {
             "message": "Database seeded successfully",
             "status": "success",
@@ -93,6 +128,7 @@ def seed_database(secret: str):
             "products": ["Apple", "Bread", "Milk"]
         }
     except Exception as e:
+        db.rollback()
         raise HTTPException(status_code=500, detail=f"Seeding failed: {str(e)}")
     finally:
         db.close()
