@@ -1,21 +1,21 @@
 # Grocery Backend API
 
-A production‑ready backend built with **FastAPI**, **SQLAlchemy**, and **JWT authentication**. This project includes core modules such as authentication, products, orders, cart, wishlist, and admin utilities.
+A production‑ready backend built with FastAPI, SQLAlchemy, and JWT authentication. This project includes core modules such as authentication, products, orders, cart, wishlist, and admin utilities.
 
 ---
 
 ## Features
 
-- **User Authentication** (JWT based login/signup)
-- **Product Management** (CRUD, categories, popularity filter)
-- **Order Management** (create order, order status, coupon handling)
-- **Cart System** (add/remove/update items)
-- **Wishlist System** (add/remove items)
-- **Image Upload** (via Form‑Data)
-- **Admin Utilities** (sales report filters)
-- **SQLAlchemy ORM models** with relationships
-- **Enum-based status fields** for reliability
-- **Environment‑based config structure**
+- User Authentication (JWT based login/signup)
+- Product Management (CRUD, categories, popularity filter)
+- Order Management (create order, order status, coupon handling)
+- Cart System (add/remove/update items)
+- Wishlist System (add/remove items)
+- Image Upload (via Form‑Data)
+- Admin Utilities (sales report filters)
+- SQLAlchemy ORM models with relationships
+- Enum-based status fields for reliability
+- Environment‑based config structure
 
 ---
 
@@ -23,19 +23,22 @@ A production‑ready backend built with **FastAPI**, **SQLAlchemy**, and **JWT a
 
 ```
 app/
+├── auth.py
 ├── main.py
-├── models/
-├── schemas/
-├── crud/
+├── models.py
+├── schemas.py
+├── crud.py
 ├── routers/
 │ ├── auth.py
 │ ├── product.py
 │ ├── orders.py
+| ├── promocode.py
 │ ├── cart.py
 │ ├── wishlist.py
-├── utils/
+│ ├── inventory.py
 ├── database.py
-└── core/
+└── seed.py
+uploads/
 
 ---
 
@@ -43,20 +46,20 @@ app/
 
 ### 1. Create Virtual Environment
 
-```bash
+```
 python -m venv .venv
-venv\Scripts\activate   # Windows
+.\venv\Scripts\activate   # Windows
 ```
 
 ### 2. Install Dependencies
 
-```bash
+```
 pip install -r requirements.txt
 ```
 
 ### 3. Run Server
 
-```bash
+```
 uvicorn app.main:app --reload
 
 ```
@@ -73,7 +76,7 @@ http://127.0.0.1:8000/docs
 
 ## Authentication
 
-This project uses **OAuth2PasswordBearer** + **JWT tokens**.
+This project uses OAuth2PasswordBearer + JWT tokens.
 
 Login returns an access token to be used in all authenticated routes.
 
@@ -113,7 +116,6 @@ GET /wishlist/
 
 Supports filtering by:
 
-- Date range
 - Category
 - Popular items
 - Limit
@@ -125,20 +127,19 @@ Supports filtering by:
 Create `.env` file:
 
 ```
-SECRET_KEY=your_secret_key
-ALGORITHM=HS256
-DATABASE_URL=sqlite:///./grocery.db
+SECRET_KEY
+DATABASE_URL
 ```
 
 ---
 
 ## Tech Stack
 
-- **FastAPI**
-- **SQLAlchemy**
-- **Pydantic**
-- **Uvicorn**
-- **Passlib**
-- **Python-Jose**
+- FastAPI
+- SQLAlchemy
+- Pydantic
+- Uvicorn
+- Passlib
+- Python-Jose
 
 ---
