@@ -14,7 +14,7 @@ services:
       - key: ACCESS_TOKEN_EXPIRE_MINUTES
         value: 10080
       - key: PYTHON_VERSION
-        value: 3.11.0
+        value: 3.13.7
 
 databases:
   - name: grocery-db
