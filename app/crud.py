@@ -9,8 +9,14 @@ def get_user_by_email(db: Session, email: str):
     return db.query(models.User).filter(models.User.email == email).first()
 
 def create_user(db: Session, user: schemas.UserCreate):
-    # Ensure password is within bcrypt limits (72 bytes)
-    password = user.password[:72] if len(user.password) > 72 else user.password
+    """Create a new user with hashed password"""
+    # Ensure password is a string and within safe length
+    password = str(user.password)
+    
+    # Extra safety: truncate at character level before hashing
+    if len(password) > 72:
+        password = password[:72]
+    
     hashed = auth.hash_password(password)
     
     db_user = models.User(
@@ -23,10 +29,6 @@ def create_user(db: Session, user: schemas.UserCreate):
     db.commit()
     db.refresh(db_user)
     return db_user
-
-def get_user(db: Session, user_id: int):
-    return db.query(models.User).get(user_id)
-
 
 # Products
 def create_product(db: Session, product: schemas.ProductCreate):
