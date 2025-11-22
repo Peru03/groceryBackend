@@ -3,42 +3,49 @@ from .database import engine, SessionLocal, Base
 from . import models
 from passlib.context import CryptContext
 
-# Create password context directly here to avoid any import issues
+# Password hashing context
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 def hash_password_safe(password: str) -> str:
-    """Hash password with bcrypt, ensuring it's under 72 bytes"""
-    # Truncate to 72 bytes if needed
-    safe_password = password[:72] if len(password) > 72 else password
+    """
+    Hash a password using bcrypt safely.
+    Truncate to 72 bytes to avoid bcrypt limitation.
+    """
+    safe_password = password.encode("utf-8")[:72].decode("utf-8", errors="ignore")
     return pwd_context.hash(safe_password)
 
 def seed():
+    """
+    Seed the database with initial users and products.
+    """
+    # Create tables if they don't exist
     Base.metadata.create_all(bind=engine)
+
     db: Session = SessionLocal()
     try:
-        # Create manager if doesn't exist
+        # --- Create manager ---
         if not db.query(models.User).filter_by(email="manager@example.com").first():
-            m = models.User(
+            manager = models.User(
                 name="Manager",
                 email="manager@example.com",
                 hashed_password=hash_password_safe("managerpass"),
                 role="manager"
             )
-            db.add(m)
-            print(" Manager account created")
-        
-        # Create customer if doesn't exist
+            db.add(manager)
+            print("Manager account created")
+
+        # --- Create customer ---
         if not db.query(models.User).filter_by(email="customer@example.com").first():
-            c = models.User(
+            customer = models.User(
                 name="Customer",
                 email="customer@example.com",
                 hashed_password=hash_password_safe("custpass"),
                 role="customer"
             )
-            db.add(c)
-            print(" Customer account created")
-        
-        # Create products if none exist
+            db.add(customer)
+            print("Customer account created")
+
+        # --- Create products ---
         if db.query(models.Product).count() == 0:
             products = [
                 models.Product(name="Apple", category="Fruits", price=50.0, stock=100),
@@ -49,17 +56,19 @@ def seed():
                 models.Product(name="Rice", category="Grains", price=120.0, stock=200),
             ]
             db.add_all(products)
-            print(" Products created")
-        
+            print("Products created")
+
+        # Commit all changes
         db.commit()
-        print(" Database seeded successfully!")
-        
+        print("Database seeded successfully!")
+
     except Exception as e:
         db.rollback()
-        print(f" Seeding error: {str(e)}")
+        print(f"Seeding error: {str(e)}")
         raise
     finally:
         db.close()
 
+# Optional: allow running directly
 if __name__ == "__main__":
     seed()
