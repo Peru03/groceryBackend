@@ -1,7 +1,16 @@
 from sqlalchemy.orm import Session
 from .database import engine, SessionLocal, Base
 from . import models
-from .auth import hash_password
+from passlib.context import CryptContext
+
+# Create password context directly here to avoid any import issues
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+def hash_password_safe(password: str) -> str:
+    """Hash password with bcrypt, ensuring it's under 72 bytes"""
+    # Truncate to 72 bytes if needed
+    safe_password = password[:72] if len(password) > 72 else password
+    return pwd_context.hash(safe_password)
 
 def seed():
     Base.metadata.create_all(bind=engine)
@@ -12,7 +21,7 @@ def seed():
             m = models.User(
                 name="Manager",
                 email="manager@example.com",
-                hashed_password=hash_password("managerpass"),
+                hashed_password=hash_password_safe("managerpass"),
                 role="manager"
             )
             db.add(m)
@@ -23,7 +32,7 @@ def seed():
             c = models.User(
                 name="Customer",
                 email="customer@example.com",
-                hashed_password=hash_password("custpass"),
+                hashed_password=hash_password_safe("custpass"),
                 role="customer"
             )
             db.add(c)
