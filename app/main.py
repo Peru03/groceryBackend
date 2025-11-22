@@ -1,14 +1,42 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+import os
 from .database import Base, engine
-from .routers import auth as auth_router, products as products_router, cart as cart_router, orders as orders_router ,wishlist as wishlist_router,promocodes as promocode_router ,inventory as inventory_router
-from . import models
+from .routers import (
+    auth as auth_router,
+    products as products_router,
+    cart as cart_router,
+    orders as orders_router,
+    wishlist as wishlist_router,
+    promocodes as promocode_router,
+    inventory as inventory_router
+)
 
-app = FastAPI(title="Grocery Backend")
+app = FastAPI(
+    title="Grocery Backend API",
+    description="Production-ready grocery e-commerce API",
+    version="1.0.0"
+)
 
-# create tables
+# CORS Configuration
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Update with your frontend URL in production
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Create tables
 Base.metadata.create_all(bind=engine)
 
-# include routers with prefixes
+# Mount static files for uploads
+UPLOAD_DIR = "uploads"
+os.makedirs(UPLOAD_DIR, exist_ok=True)
+app.mount("/uploads", StaticFiles(directory=UPLOAD_DIR), name="uploads")
+
+# Include routers
 app.include_router(auth_router.router)
 app.include_router(products_router.router)
 app.include_router(cart_router.router)
@@ -18,7 +46,15 @@ app.include_router(promocode_router.router)
 app.include_router(inventory_router.router)
 
 
-
 @app.get("/")
 def root():
-    return {"message": "Grocery backend running"}
+    return {
+        "message": "Grocery Backend API is running",
+        "status": "healthy",
+        "docs": "/docs"
+    }
+
+
+@app.get("/health")
+def health_check():
+    return {"status": "healthy"}

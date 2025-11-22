@@ -7,8 +7,21 @@ load_dotenv()
 
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./grocery.db")
 
-# sync engine for MySQL + PyMySQL
-engine = create_engine(DATABASE_URL, echo=True, future=True)
+# Fix for Render PostgreSQL URLs (postgres:// -> postgresql://)
+if DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+
+# Production settings
+connect_args = {}
+if "sqlite" in DATABASE_URL:
+    connect_args = {"check_same_thread": False}
+
+engine = create_engine(
+    DATABASE_URL,
+    connect_args=connect_args,
+    pool_pre_ping=True,  # Verify connections before using
+    pool_recycle=300,    # Recycle connections after 5 minutes
+)
 
 SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
 
