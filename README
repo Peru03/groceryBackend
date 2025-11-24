@@ -3,6 +3,9 @@
 A production-ready RESTful backend built with **FastAPI**, **SQLAlchemy**, and **JWT authentication**. This project provides a complete e-commerce solution for grocery stores with user management, product catalog, shopping cart, wishlist, orders, promotional codes, and inventory tracking.
 
 ---
+🌐 Live API: https://grocerybackend-tikm.onrender.com
+📚 API Documentation: https://grocerybackend-tikm.onrender.com/docs
+💻 GitHub Repository: https://github.com/Peru03/groceryBackend
 
 ##  Features
 
@@ -59,13 +62,7 @@ cd grocery-backend
 **Windows:**
 ```bash
 python -m venv .venv
-.venv\Scripts\activate
-```
-
-**macOS/Linux:**
-```bash
-python3 -m venv .venv
-source .venv/bin/activate
+.venv/Scripts/activate
 ```
 
 ### 3. Install Dependencies
@@ -79,9 +76,9 @@ pip install -r requirements.txt
 Create a `.env` file in the root directory:
 
 ```env
-SECRET_KEY=your-secret-key-here
-DATABASE_URL=mysql+pymysql://root:@localhost:3306/grocerydb
-ACCESS_TOKEN_EXPIRE_MINUTES=10080
+SECRET_KEY
+DATABASE_URL
+ACCESS_TOKEN_EXPIRE_MINUTES
 ```
 
 ### 5. Seed Database (Optional)
@@ -101,13 +98,12 @@ This creates:
 uvicorn app.main:app --reload
 ```
 
-Server starts at: `http://127.0.0.1:8000`
+Server starts at: `https://grocerybackend-tikm.onrender.com`
 
 ### 7. Access API Documentation
 
 Open your browser:
-- **Swagger UI**: `http://127.0.0.1:8000/docs`
-- **ReDoc**: `http://127.0.0.1:8000/redoc`
+- **Swagger UI**: `https://grocerybackend-tikm.onrender.com/docs`
 
 ---
 
@@ -224,7 +220,7 @@ Authorization: Bearer <your_access_token>
 ### Creating a Product with Image
 
 ```bash
-curl -X POST "http://127.0.0.1:8000/products/" \
+curl -X POST "https://grocerybackend-tikm.onrender.com/products/" \
   -H "Authorization: Bearer <token>" \
   -F "name=Organic Banana" \
   -F "category=Fruits" \
@@ -236,7 +232,7 @@ curl -X POST "http://127.0.0.1:8000/products/" \
 ### Adding to Cart
 
 ```bash
-curl -X POST "http://127.0.0.1:8000/cart/" \
+curl -X POST "https://grocerybackend-tikm.onrender.com/cart/" \
   -H "Authorization: Bearer <token>" \
   -H "Content-Type: application/json" \
   -d '{"product_id": 1, "quantity": 3}'
@@ -245,14 +241,14 @@ curl -X POST "http://127.0.0.1:8000/cart/" \
 ### Checkout with Promo Code
 
 ```bash
-curl -X POST "http://127.0.0.1:8000/orders/checkout?promo_code=SAVE10" \
+curl -X POST "https://grocerybackend-tikm.onrender.com/orders/checkout?promo_code=SAVE10" \
   -H "Authorization: Bearer <token>"
 ```
 
 ### Creating a Promotional Code
 
 ```bash
-curl -X POST "http://127.0.0.1:8000/promocodes/create" \
+curl -X POST "https://grocerybackend-tikm.onrender.com/promocodes/create" \
   -H "Authorization: Bearer <token>" \
   -H "Content-Type: application/json" \
   -d '{
@@ -369,7 +365,7 @@ The API returns standard HTTP status codes:
 Access the interactive API documentation to test all endpoints:
 
 ```
-http://127.0.0.1:8000/docs
+https://grocerybackend-tikm.onrender.com/docs
 ```
 
 1. Click "Authorize" button
